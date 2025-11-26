@@ -9,7 +9,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo 'Pulling project from GitHub...'
-                checkout scm
+                git url: 'https://github.com/M-Sankeerthana-R-R/SE-Project', branch: 'main', credentialsId: 'github-access'
             }
         }
 
@@ -38,7 +38,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo 'Pulling project from GitHub...'
-                checkout scm
+                git url: 'https://github.com/M-Sankeerthana-R-R/SE-Project', branch: 'main', credentialsId: 'github-access'
             }
         }
         stage('Build') {
