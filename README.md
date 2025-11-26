@@ -203,3 +203,160 @@ UI Module, Auth Module, DB Module, Payment Module, etc.
 <img width="690" height="962" alt="image" src="https://github.com/user-attachments/assets/85d5c7e2-8194-4291-9bf5-313b01192608" />
 <img width="704" height="970" alt="image" src="https://github.com/user-attachments/assets/5757e448-ba6d-44e6-b0e3-3c62eef06ec8" />
 <img width="654" height="578" alt="image" src="https://github.com/user-attachments/assets/c53ca59a-42a2-4b15-9d17-303398a428ec" />
+
+
+
+CREATE A 2-STAGE PIPELINE IN JENKINS WITHOUT CODE (FREESTYLE JOB)
+Stages:
+
+1️⃣ Build
+2️⃣ Test
+
+✅ STEP 1 — Create Freestyle Job
+
+Jenkins Dashboard → New Item
+
+Enter name:
+
+2-stage-no-code
+
+
+Select Freestyle project
+
+Click OK
+
+✅ STEP 2 — Add Git Repository
+
+Scroll to Source Code Management → Git
+
+Repo URL:
+
+https://github.com/M-Sankeerthana-R-R/labinternal-1
+
+
+Credentials → choose your GitHub token
+
+Branch:
+
+main
+
+✅ STEP 3 — Add Build Step for BUILD stage
+
+Scroll to Build → Add build step
+
+Choose:
+
+👉 Invoke top-level Maven targets
+
+Fill:
+
+Goals:
+
+clean install
+
+
+This completes STAGE 1 (Build).
+
+✅ STEP 4 — Add Build Step for TEST stage
+
+Click Add build step again
+
+Choose:
+
+👉 Invoke top-level Maven targets
+
+Fill:
+
+Goals:
+
+test
+
+
+Now you have:
+
+Build stage
+
+Test stage
+
+Both created without writing pipeline code.
+
+⭐ THIS IS YOUR 2-STAGE PIPELINE WORKFLOW
+
+NO code.
+Only Freestyle + Maven.
+
+Now click Save → Build Now.
+Jenkins will run:
+
+Git Checkout
+
+Maven clean install
+
+Maven test
+
+⭐ NOW LET’S CREATE THE 3-STAGE PIPELINE WITHOUT CODE
+
+Stages:
+
+Build
+
+Test
+
+Deploy
+
+🚀 CREATE 3-STAGE PIPELINE (NO CODE)
+STEP 1 — Create another Freestyle Job
+
+Dashboard → New Item
+Name:
+
+3-stage-no-code
+
+
+Select Freestyle project
+
+STEP 2 — Add Git Repository
+
+Same as 2-stage job.
+
+STEP 3 — Stage 1: Build
+
+Add build step:
+
+👉 Invoke top-level Maven targets
+Goals:
+
+clean package
+
+STEP 4 — Stage 2: Test
+
+Add build step again:
+
+👉 Invoke top-level Maven targets
+Goals:
+
+test
+
+STEP 5 — Stage 3: Deploy (NO SERVER REQUIRED)
+
+Add build step:
+
+👉 Execute Windows batch command
+
+Add any simulated deploy command:
+
+echo Deploying application...
+echo Deployment complete.
+
+
+This simulates deployment without needing Tomcat/Kubernetes.
+
+🎉 RESULT:
+
+You have created:
+
+✔ 2-stage pipeline WITHOUT code
+✔ 3-stage pipeline WITHOUT code
+✔ Only using Freestyle jobs, Git, Maven build steps
+
+This matches exact practical exam expectations.
