@@ -195,4 +195,252 @@ UI Module, Auth Module, DB Module, Payment Module, etc.
 
 ✔ Output: Architecture-level structure.
 
+ATM Machine
+
+Use Case
+
+    [User] ---> (Insert Card)
+               (Enter PIN)
+               (Select Transaction)
+               (Withdraw Cash)
+               (Check Balance)
+               (Print Receipt)
+
+
+Class
+
++----------------+    +----------------+    +-------------------+
+|   User         |----|   Account      |----|  Transaction      |
+|----------------|    |----------------|    |-------------------|
+|+ cardNo        |    |+ accNo         |    |+ txnId            |
+|+ name          |    |+ balance       |    |+ amount           |
+|+ insertCard()  |    |+ deposit()     |    |+ execute()        |
+|+ enterPIN()    |    |+ withdraw()    |    |+ getStatus()      |
++----------------+    +----------------+    +-------------------+
+
+         \                             /
+          \---+-----------------------+
+              |   ATMController       |
+              |-----------------------|
+              |+ validateCard()       |
+              |+ dispenseCash()       |
+              |+ printReceipt()       |
+              +-----------------------+
+
+
+Sequence
+
+User        ATM        Controller     BankServer     CashDispenser
+|           |            |               |               |
+|--insert-> |            |               |               |
+|          -> validate ->|--authRequest->|               |
+|          <- authOK ----|<--authReply---|               |
+|--select-> |--withdraw-> |               |--debitAcct--->|
+|          <- success ---|               |<--confirm-----|
+|--collect->|--dispense-> |               |               |
+|          <- cash ------|               |               |
+
+
+Component
+
+[UI Module] --> [ATM Controller] --> [Banking Service]
+                     |                    |
+                     v                    v
+               [Transaction Engine]   [Database: Accounts]
+                     |
+                     v
+               [Hardware Driver: Dispenser/Printer]
+
+Online Ticket Reservation System
+
+Use Case
+
+[Customer] --> (Search Events) --> (Select Seats) --> (Make Payment) --> (Receive Ticket)
+[Admin]    --> (Add Event)  --> (Manage Bookings)
+
+
+Class
+
++----------------+   +----------------+   +------------------+
+| Customer       |---| Reservation    |---| Payment          |
+|----------------|   |----------------|   |------------------|
+|+ custId        |   |+ resId         |   |+ paymentId       |
+|+ search()      |   |+ seatList      |   |+ pay()           |
+|+ book()        |   |+ confirm()     |   |+ refund()        |
++----------------+   +----------------+   +------------------+
+
+           +-----------------+
+           | Event           |
+           |-----------------|
+           |+ eventId        |
+           |+ venue          |
+           |+ getSeats()     |
+           +-----------------+
+
+
+Sequence
+
+User     WebUI    BookingService   PaymentGateway   TicketSystem
+|        |          |                |                |
+|--search->|        |                |                |
+|         ->list---->|                |                |
+|--select->|--reserve->|              |                |
+|         <-holdOK---|                |                |
+|--pay---->|--charge->|--authorize--> |                |
+|         <-paid-----|<-confirm-------|                |
+|--ticket->|<-deliver-|                |                |
+
+
+Component
+
+[Web UI] --> [Booking Service] --> [Payment Service]
+                 |                     |
+                 v                     v
+            [Seat Management]      [External PG]
+                 |
+                 v
+            [Database: Events/Bookings]
+
+Banking (Core Banking System)
+
+Use Case
+
+[Customer] -> (Open Account)
+           -> (Deposit)
+           -> (Withdraw)
+           -> (Transfer Funds)
+[BankStaff] -> (Approve Loan) -> (Generate Report)
+
+
+Class
+
++---------------+   +--------------+   +---------------+
+| Customer      |---| Account      |---| Transaction   |
+|---------------|   |--------------|   |---------------|
+|+ custId       |   |+ accNo       |   |+ txnId        |
+|+ name         |   |+ balance     |   |+ amount       |
+|+ requestLoan()|   |+ credit()    |   |+ execute()    |
++---------------+   +--------------+   +---------------+
+
+       +------------------+
+       | Loan             |
+       |------------------|
+       |+ loanId          |
+       |+ apply()         |
+       |+ approve()       |
+       +------------------+
+
+
+Sequence
+
+Customer  InternetBanking  AccountService   ClearingHouse   DB
+|         |                |               |               |
+|--login->|                |               |               |
+|--transfer->|--validate--> |--debitAcct--> |               |
+|           <-validated----|<--confirm----- |--settle------>|
+|--notify-> |<--success-----|               |               |
+
+
+Component
+
+[Web/Mobile App] -> [API Gateway] -> [Core Banking Services]
+                       |                 |
+                       v                 v
+               [Auth Service]       [Transaction Engine]
+                                           |
+                                           v
+                                      [DB: Accounts/Txns]
+
+Library Management
+
+Use Case
+
+[Member] -> (Search Catalog) -> (Borrow Book) -> (Return Book) -> (Reserve Book)
+[Librarian] -> (Add Book) -> (Manage Members) -> (Generate Reports)
+
+
+Class
+
++---------------+   +----------------+   +----------------+
+| Member        |---| Loan           |---| Book           |
+|---------------|   |----------------|   |----------------|
+|+ memberId     |   |+ loanId        |   |+ isbn          |
+|+ name         |   |+ dueDate       |   |+ title         |
+|+ borrow()     |   |+ renew()       |   |+ availability  |
++---------------+   +----------------+   +----------------+
+
+         +------------------+
+         | Catalog          |
+         |------------------|
+         |+ search()        |
+         |+ addBook()       |
+         +------------------+
+
+
+Sequence
+
+Member   UI     LibraryService   CatalogDB    Notification
+|        |         |               |               |
+|--search->|       |--queryCatalog->|               |
+|        <-results--|               |               |
+|--borrow->|--createLoan->|--updateBook->|           |
+|        <-confirm----|<-ack-----------|--notify---->|
+
+
+Component
+
+[Catalog UI] -> [Library Service] -> [Loan Manager]
+                     |                  |
+                     v                  v
+                 [Catalog DB]       [Member DB]
+                     |
+                     v
+                [Notification Service]
+
+E-commerce
+
+Use Case
+
+[Customer] -> (Browse Products) -> (Add to Cart) -> (Checkout) -> (Make Payment) -> (Track Order)
+[Admin] -> (Add Product) -> (Manage Orders)
+
+
+Class
+
++---------------+   +--------------+   +---------------+
+| Customer      |---| Cart         |---| Order         |
+|---------------|   |--------------|   |---------------|
+|+ custId       |   |+ items       |   |+ orderId      |
+|+ register()   |   |+ addItem()   |   |+ placeOrder() |
++---------------+   +--------------+   +---------------+
+
+      +----------------+
+      | Product        |
+      |----------------|
+      |+ productId     |
+      |+ price         |
+      |+ getDetails()  |
+      +----------------+
+
+
+Sequence
+
+Customer  WebUI    ProductService   CartService    PaymentGateway   Shipping
+|         |          |                |               |             |
+|--browse->|--list->  |                |               |             |
+|--add---->|--addItem->|--reserveStock->|               |             |
+|--checkout->|--createOrder->|--charge->|--authorize---->|           |
+|         <-paymentOK--|<-confirm------|<-confirm-------|           |
+|--track-->|<-tracking--|                |               |            |
+
+
+Component
+
+[Web UI] -> [API Layer] -> [Product Service] -> [Inventory Service]
+                            |                    |
+                            v                    v
+                        [Order Service]       [Payment Gateway]
+                            |
+                            v
+                       [DB: Products/Orders/Users]
 
